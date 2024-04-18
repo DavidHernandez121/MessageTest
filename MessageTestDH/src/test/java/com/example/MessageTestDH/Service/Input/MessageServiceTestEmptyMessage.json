@@ -1,0 +1,16 @@
+{
+  "devices": [
+    {
+      "id": "1",
+      "message": ["este", "", "", "mensaje", ""]
+    },
+    {
+      "id": "2",
+      "message": ["", "", "", "", "secreto"]
+    },
+    {
+      "id": "3",
+      "message": ["este", "", "un", "", ""]
+    }
+  ]
+}

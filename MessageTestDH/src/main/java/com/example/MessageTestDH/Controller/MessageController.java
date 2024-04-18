@@ -1,5 +1,6 @@
 package com.example.MessageTestDH.Controller;
 
+import com.example.MessageTestDH.MessageDTO.MessageDTO;
 import com.example.MessageTestDH.Model.Message;
 import com.example.MessageTestDH.Service.MessageServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class MessageController {
     private final MessageServiceImpl messageService;
 
     @PostMapping
-    public ResponseEntity postMessage(@RequestBody Map<String, List<Message>> message){
+    public ResponseEntity postMessage(@RequestBody Map<String, List<MessageDTO>> message){
         return messageService.getMessage(message);
     }
 }

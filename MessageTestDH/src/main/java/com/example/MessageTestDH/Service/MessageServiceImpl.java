@@ -1,5 +1,7 @@
 package com.example.MessageTestDH.Service;
 
+import com.example.MessageTestDH.MessageDTO.MessageDTO;
+import com.example.MessageTestDH.MessageDTO.MessageMapper;
 import com.example.MessageTestDH.Model.Message;
 import com.example.MessageTestDH.Repository.Repository;
 import lombok.AllArgsConstructor;
@@ -7,78 +9,101 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
 public class MessageServiceImpl implements MessageService{
 
     private final Repository repository;
+    private final MessageMapper messageMapper;
 
     @Override
-    public  ResponseEntity getMessage(Map<String, List<Message>> message) {
+    public  ResponseEntity getMessage(Map<String, List<MessageDTO>> messages) {
 
-        Map<String, String> returnedMap = new HashMap<>();
-        List<Message> devicesList1 = new ArrayList<>();
-        List<String> listaFinal = new ArrayList<>();
-        devicesList1 = message.get("devices");
-        HttpStatus httpStatus = HttpStatus.OK;
+        List<MessageDTO> deviceMessages = messages.get("devices");
+        if(deviceMessages == null || deviceMessages.isEmpty()){
+            final String responseMsg = "Devices messages not found";
+            return new ResponseEntity<>(responseMsg, HttpStatus.BAD_REQUEST);
+        }
 
-        if(devicesList1.isEmpty()){
-            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        }else{
-            for (Message mapa : devicesList1) {
-                List<String> strings = mapa.getMessage();
-                for(int i=0; i<strings.size(); i++){
-                    String palabra = strings.get(i);
-                    if(i<= listaFinal.size()-1){
-                        if(palabra.equals("")){
-                            continue;
-                        }else{
-                            if(!listaFinal.get(i).equals("")){
-                                if( !listaFinal.get(i).equalsIgnoreCase(palabra)){
-                                    listaFinal.set(i, "");
-                                    httpStatus = HttpStatus.BAD_REQUEST;
-                                }
-                            }else{
-                                listaFinal.set(i, palabra);
-                            }
-                        }
-                    }else {
-                        listaFinal.add(palabra);
+        List<String> interceptedMessage = new ArrayList<>();
+        int firstWordIndex = 0;
+
+        for (final MessageDTO messageDTO : deviceMessages) {
+            final List<String> words = messageDTO.getMessage();
+            for(int i=0; i<words.size(); i++){
+                final String word = words.get(words.size()-1-i).trim();
+
+                if(interceptedMessage.size() <= i){
+                    if(word.isEmpty()){
+                        firstWordIndex++;
+                    }else{
+                        firstWordIndex=0;
                     }
+                    interceptedMessage.add(0, word);
+                    continue;
+                }
+                final int currentInterceptedWordIndex = interceptedMessage.size()-1-i;
+                if(interceptedMessage.get(currentInterceptedWordIndex).isEmpty() && !word.isEmpty()){
+                    if(currentInterceptedWordIndex < firstWordIndex){
+                        firstWordIndex = currentInterceptedWordIndex;
+                    }
+                    interceptedMessage.set(currentInterceptedWordIndex, word);
+                    continue;
+                }
 
+                if(!word.isEmpty() && !word.equalsIgnoreCase(interceptedMessage.get(currentInterceptedWordIndex))){
+                    final String responseMsg = "We can't determine the message, the devices have different words for certain position";
+                    return new ResponseEntity<>(responseMsg, HttpStatus.BAD_REQUEST);
                 }
             }
         }
 
-        if(listaFinal.stream().allMatch(String::isEmpty) || listaFinal.contains("")){
-            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        if(firstWordIndex >= interceptedMessage.size()){
+            final String responseMsg = "We can't determine the message, the entire message is empty";
+            return new ResponseEntity<>(responseMsg, HttpStatus.BAD_REQUEST);
         }
-        returnedMap.put("Message", String.join(" ", listaFinal));
 
-        return new ResponseEntity<>(returnedMap, httpStatus);
+        interceptedMessage = interceptedMessage.subList(firstWordIndex, interceptedMessage.size());
+        if(interceptedMessage.stream().anyMatch(String::isEmpty)){
+            final String responseMsg = "We can't determine the message. All devices have an empty word at certain position";
+            return new ResponseEntity<>(responseMsg, HttpStatus.BAD_REQUEST);
+        }
+
+        Map<String, String> response = new HashMap<>();
+        response.put("Message", String.join(" ", interceptedMessage));
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
-    public Message saveMessage(Long id, Message message) {
-        message.setId(id);
-        return repository.save(message);
+    public ResponseEntity saveMessage(Long id, MessageDTO messageDTO) {
+        messageDTO.setId(id);
+        Message message = messageMapper.dtoToEntity(messageDTO);
+        return new ResponseEntity(messageMapper.entityToDto(repository.save(message)), HttpStatus.OK);
     }
 
     @Override
-    public  ResponseEntity getMessage (){
+    public  ResponseEntity getSplitMessages (){
         List<Message> messages = repository.findAll();
-        Map<String, List<Message>> messageMap = new HashMap<>();
-        messageMap.put("devices", messages);
-        return getMessage(messageMap);
+        Map<String, List<MessageDTO>> messageDTOMap = new HashMap<>();
+        messageDTOMap.put("devices", entityListToDTOList(messages));
+        return getMessage(messageDTOMap);
     }
 
     @Override
-    public  List<Message> getMessages () {
-        return repository.findAll();
+    public  ResponseEntity getAllSplitMessages () {
+        List<MessageDTO> response = entityListToDTOList(repository.findAll());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+    private List<MessageDTO> entityListToDTOList(List<Message> messages){
+        List<MessageDTO> messagesDTO = new ArrayList<>();
+        messages.forEach(message -> {
+            messagesDTO.add(messageMapper.entityToDto(message));
+        });
+        return messagesDTO;
     }
 }
