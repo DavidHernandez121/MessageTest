@@ -1,6 +1,8 @@
 package com.example.MessageTestDH.Controller;
 
+import com.example.MessageTestDH.MessageDTO.MessageDTO;
 import com.example.MessageTestDH.Model.Message;
+import com.example.MessageTestDH.Service.MessageService;
 import com.example.MessageTestDH.Service.MessageServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,20 +18,20 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class MessageSplitController {
 
-    private final MessageServiceImpl messageService;
+    private final MessageService messageService;
 
-    @PostMapping("/{Id}")
-    public ResponseEntity postSplitMessage(@PathVariable("Id") Long id, @RequestBody Message message){
-        return new ResponseEntity<>(messageService.saveMessage(id, message), HttpStatus.OK);
+    @PostMapping("/{id}")
+    public ResponseEntity postSplitMessage(@PathVariable("id") Long id, @RequestBody MessageDTO message){
+        return messageService.saveMessage(id, message);
     }
 
     @GetMapping
-    public ResponseEntity getSplitMessage(){
-        return messageService.getMessage();
+    public ResponseEntity getSplitMessages(){
+        return messageService.getSplitMessages();
     }
 
     @GetMapping("/all")
-    public List<Message> getAllSplitMessage(){
-        return messageService.getMessages();
+    public ResponseEntity getAllSplitMessage(){
+        return messageService.getAllSplitMessages();
     }
 }
