@@ -1,0 +1,11 @@
+com\example\MessageTestDH\Model\Message.class
+com\example\MessageTestDH\Controller\MessageSplitController.class
+com\example\MessageTestDH\MessageDTO\MessageDTO.class
+com\example\MessageTestDH\MessageTestDhApplication.class
+com\example\MessageTestDH\Repository\Repository.class
+com\example\MessageTestDH\Controller\MessageController.class
+com\example\MessageTestDH\Controller\MessageController2.class
+com\example\MessageTestDH\MessageDTO\MessageMapperImpl.class
+com\example\MessageTestDH\Service\MessageServiceImpl.class
+com\example\MessageTestDH\MessageDTO\MessageMapper.class
+com\example\MessageTestDH\Service\MessageService.class
