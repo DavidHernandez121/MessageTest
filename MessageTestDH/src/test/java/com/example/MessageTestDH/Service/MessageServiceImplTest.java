@@ -1,7 +1,6 @@
 package com.example.MessageTestDH.Service;
 
 import com.example.MessageTestDH.MessageDTO.MessageDTO;
-import com.example.MessageTestDH.Model.Message;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +14,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,17 +24,12 @@ class MessageServiceImplTest {
     @InjectMocks
     private MessageServiceImpl messageService;
 
-    private Message message;
-
     MessageServiceImplTest() {
     }
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        message = new Message();
-        message.setId(1L);
-        message.setMessage(Arrays.asList("este","mensaje"));
     }
 
     @Test
