@@ -88,22 +88,14 @@ public class MessageServiceImpl implements MessageService{
     public  ResponseEntity getSplitMessages (){
         List<Message> messages = repository.findAll();
         Map<String, List<MessageDTO>> messageDTOMap = new HashMap<>();
-        messageDTOMap.put("devices", entityListToDTOList(messages));
+        messageDTOMap.put("devices", messageMapper.entityListToDTOList(messages));
         return getMessage(messageDTOMap);
     }
 
     @Override
     public  ResponseEntity getAllSplitMessages () {
-        List<MessageDTO> response = entityListToDTOList(repository.findAll());
+        List<MessageDTO> response = messageMapper.entityListToDTOList(repository.findAll());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
-    private List<MessageDTO> entityListToDTOList(List<Message> messages){
-        List<MessageDTO> messagesDTO = new ArrayList<>();
-        messages.forEach(message -> {
-            messagesDTO.add(messageMapper.entityToDto(message));
-        });
-        return messagesDTO;
-    }
 }

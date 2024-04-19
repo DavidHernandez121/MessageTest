@@ -40,7 +40,7 @@ El proyecto se puede obtener desde github en la dirección: https://github.com/D
 
 #### Dependencias
 
-La administración de dependencias se hizo utilizando maven. Por lo cual puede abrir una terminal, ir al folder del proyecto y utilizar el comando:
+La administración de dependencias se hizo utilizando maven. Por lo cual puede abrir una terminal, ir al folder del proyecto donde se encuentra el pom y utilizar el comando:
 
 ```
 mvn clean install -U

@@ -1,7 +1,6 @@
 package com.example.MessageTestDH.Service;
 
 import com.example.MessageTestDH.MessageDTO.MessageDTO;
-import com.example.MessageTestDH.Model.Message;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

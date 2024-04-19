@@ -1,16 +1,10 @@
 package com.example.MessageTestDH.Controller;
 
 import com.example.MessageTestDH.MessageDTO.MessageDTO;
-import com.example.MessageTestDH.Model.Message;
 import com.example.MessageTestDH.Service.MessageService;
-import com.example.MessageTestDH.Service.MessageServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
 
 
 @RestController
